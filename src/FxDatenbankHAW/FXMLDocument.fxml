@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<VBox prefHeight="635.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="FxDatenbankHAW.FXMLDocumentController">
+    <children>
+        <MenuBar prefHeight="14.0" prefWidth="900.0" VBox.vgrow="NEVER">
+            <menus>
+                <Menu mnemonicParsing="false" text="Verbindung">
+                    <items>
+                        <MenuItem fx:id="verbinden" mnemonicParsing="false" onAction="#menu_connect" text="Verbinden" />
+                        <MenuItem fx:id="menu_disconnect" mnemonicParsing="false" onAction="#menu_disconnect" text="Trennen" />
+                        <MenuItem fx:id="menu_quit" mnemonicParsing="false" onAction="#menu_quit" text="Beenden" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Über">
+                    <items>
+                        <MenuItem fx:id="menu_ueber" mnemonicParsing="false" onAction="#menu_ueber" text="Über" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <VBox>
+            <children>
+                <GridPane prefHeight="36.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <TextField fx:id="login_benutzername" GridPane.columnIndex="1" onAction="#button_check_logindata" />
+                        <PasswordField fx:id="login_passwort" GridPane.columnIndex="3" onAction="#button_check_logindata" />
+                        <Label text="Benutzername" GridPane.halignment="RIGHT">
+                            <GridPane.margin>
+                                <Insets right="15.0" />
+                            </GridPane.margin>
+                        </Label>
+                        <Label text="Passwort" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
+                            <GridPane.margin>
+                                <Insets right="15.0" />
+                            </GridPane.margin>
+                        </Label>
+                        <Button fx:id="login_button" mnemonicParsing="false" onAction="#button_check_logindata" text="Verbinden" GridPane.columnIndex="4" GridPane.halignment="CENTER" />
+                    </children>
+                </GridPane>
+                <SplitPane dividerPositions="0.2505567928730512" focusTraversable="true" prefHeight="531.0" prefWidth="900.0" VBox.vgrow="ALWAYS">
+                    <items>
+                        <AnchorPane prefHeight="500.0" prefWidth="250.0">
+                            <children>
+                                <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Tabellen" textAlignment="CENTER" wrapText="false">
+                                    <font>
+                                        <Font size="18.0" fx:id="x1" />
+                                    </font>
+                                    <textFill>
+                                        <Color blue="0.624" green="0.624" red="0.624" fx:id="x2" />
+                                    </textFill>
+                                </Label>
+                                <ListView fx:id="ListView" layoutY="50.0" onMouseClicked="#table_clickedsomewhere" prefHeight="500.0" prefWidth="250.0" />
+                            </children>
+                        </AnchorPane>
+                        <!--<ScrollPane prefHeight="550.0" prefWidth="550.0">-->
+                        <!--<AnchorPane prefHeight="550.0" prefWidth="550.0">
+                        <children>-->
+                        <!--<content>-->
+                        <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0" prefHeight="500.0" prefWidth="650.0">
+                            <children>
+                                <Label fx:id="label_tableview" alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="Inhalt" textAlignment="CENTER" textFill="$x2" wrapText="false" />
+                                <TableView fx:id="TableView" layoutY="50.0" prefHeight="500.0" prefWidth="650.0" >
+                                    <columns>
+                                  
+                                    </columns>
+                                </TableView>
+                            </children>
+                            <!--</AnchorPane>
+                            </children>-->
+                            <!--</content>-->
+                        </AnchorPane>
+                        <!--</ScrollPane>-->
+                    </items>
+                </SplitPane>
+            </children>
+        </VBox>
+        <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+            <children>
+                <Label maxHeight="1.7976931348623157E308" maxWidth="-1.0" HBox.hgrow="ALWAYS">
+                    <font>
+                        <Font size="11.0" fx:id="x3" />
+                    </font>
+                    <textFill>
+                        <Color blue="0.625" green="0.625" red="0.625" fx:id="x4" />
+                    </textFill>
+                </Label>
+                <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+                <Label fx:id="rightStatus" font="$x3" maxWidth="-1.0" text="keine Aktive Verbindung" textFill="$x4" HBox.hgrow="NEVER" />
+            </children>
+            <padding>
+                <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+            </padding>
+        </HBox>
+    </children>
+    <stylesheets>
+        <URL value="@ComplexApplication.css" />
+    </stylesheets>
+</VBox>
