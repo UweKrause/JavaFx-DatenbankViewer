@@ -1,4 +1,4 @@
-package FxDatenbankHAW;
+package FxDatenbank;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -12,7 +12,7 @@ import javafx.stage.Stage;
  *
  * @author Uwe Krause
  */
-public class FxDatenbankHAW extends Application {
+public class FxDatenbank extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {

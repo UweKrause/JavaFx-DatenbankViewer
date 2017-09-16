@@ -1,12 +1,6 @@
-package FxDatenbankHAW;
+package FxDatenbank;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -22,7 +16,11 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.util.Callback;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.DriverManager;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 
 /**
  *
@@ -51,14 +49,17 @@ public class FXMLDocumentController {
     @FXML
     private ListView ListView;
 
-    private Statement verbinde(String user, String passwort) throws SQLException {
+    private Statement verbinde(String db_user, String db_password) throws SQLException {
 
-        // Verbindung zur Datenbank herstellen
-        DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+        // Connect to database
+        String hostName = "uwe.database.windows.net";
+        String dbName = "javafx";
 
-        Connection con = DriverManager.getConnection("jdbc:oracle:thin:@ora14.informatik.haw-hamburg.de:1521:inf14", user, passwort);
+        String url = String.format("jdbc:sqlserver://%s:1433;database=%s;user=%s;password=%s;encrypt=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;", hostName, dbName, db_user, db_password);
 
-        return con.createStatement();
+        Connection connection = DriverManager.getConnection(url);
+
+        return connection.createStatement();
 
     }
 
@@ -75,7 +76,7 @@ public class FXMLDocumentController {
 
                 Statement stmt = verbinde(user, passwort);
 
-                ResultSet rset = stmt.executeQuery("Select table_name from user_tables");
+                ResultSet rset = stmt.executeQuery("SELECT * FROM sysobjects WHERE xtype='U'");
 
                 setze_status(1);
 
@@ -92,7 +93,7 @@ public class FXMLDocumentController {
 
                 ListView.setItems(items);
             }
-        } catch (SQLException ex) {
+        } catch (SQLException e) {
             // Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
             rightStatus.setTextFill(Color.web("red"));
             rightStatus.setText("Verbindungsfehler");
@@ -100,6 +101,7 @@ public class FXMLDocumentController {
             ListView.setItems(null);
 
             System.err.println("SQl-Fehler! Verbindung okay? Benutzername & Passwort?");
+            e.printStackTrace();
         }
     }
 
@@ -108,12 +110,15 @@ public class FXMLDocumentController {
 
         Object clicked_on = ListView.getSelectionModel().getSelectedItem();
 
-        //System.out.println("clicked on " + clicked_on);
+        System.out.println("clicked on " + clicked_on);
+
+        // Tabellenliste wird aktualisiert
         fuelle_listview();
 
-        //if (clicked_on != null) {
-        fuelle_tableview(clicked_on);
-        //}
+        // Die Tabelle wird angezeigt
+        if (clicked_on != null) {
+            fuelle_tableview(clicked_on);
+        }
 
     }
 
@@ -164,16 +169,13 @@ public class FXMLDocumentController {
     //TABLE VIEW AND DATA
     @FXML
     private TableView TableView;
-    private ObservableList<ObservableList> data;
 
     private void fuelle_tableview(Object table_object) {
         // System.out.println(table_object);
         String table_name = (String) table_object;
 
-        TableView.getColumns().clear();
+        //tableview.getColumns().clear();
         label_tableview.setText(table_name);
-
-        data = FXCollections.observableArrayList();
 
         try {
             /**
@@ -182,77 +184,64 @@ public class FXMLDocumentController {
             String user = login_benutzername.getText().trim();
             String passwort = login_passwort.getText().trim();
 
+            // Tabelle leeren, falls vorher was drin war
+            TableView.getColumns().clear();
+            TableView.getItems().clear();
+
             if (!"".equals(user) && !"".equals(passwort) && table_object != null) {
 
                 Statement stmt = verbinde(user, passwort);
 
-                ResultSet rs = stmt.executeQuery("Select * from " + table_name);
+                ResultSet rs = stmt.executeQuery("Select * from [SalesLT].[" + table_name + "]");
 
-                /**
-                 * ****************************
-                 * http://blog.ngopal.com.np/2011/10/19/dyanmic-tableview-data-from-database/comment-page-1/
-                 * ****************************
-                 */
-                /**
-                 * TABLE COLUMN ADDED DYNAMICALLY
-                 */
-                for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
+                int rs_ColumnCount = rs.getMetaData().getColumnCount();
 
-                    //We are using non property style for making dynamic table
-                    final int j = i;
+                for (int i = 0; i < rs_ColumnCount; i++) {
+                    // muss fuer lambda final sein
+                    final int finalI = i;
 
-                    TableColumn col = new TableColumn(rs.getMetaData().getColumnName(i + 1));
+                    String columnName = rs.getMetaData().getColumnName(i + 1);
 
-                    col.setCellValueFactory(new Callback<CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
+                    /**
+                     * CellValueFactory basiert auf Codebeispiel
+                     * https://stackoverflow.com/questions/37559584/how-to-add-dynamic-columns-and-rows-to-tableview-in-java-fxml
+                     */
+                    TableColumn<ObservableList<String>, String> column = new TableColumn<>(columnName);
+                    column.setCellValueFactory((CellDataFeatures<ObservableList<String>, String> param) -> new ReadOnlyObjectWrapper<>(param.getValue().get(finalI)));
 
-                        @Override
-                        public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
+                    TableView.getColumns().add(column);
 
-                            return new SimpleStringProperty(param.getValue().get(j).toString());
-                        }
-
-                    });
-
-                    TableView.getColumns().addAll(col);
-
-                    //System.out.println("Column [" + i + "] ");
+                    //System.out.println("Column [" + i + "]: " + columnName);
                 }
 
-                /**
-                 * Data added to ObservableList
-                 */
+                // ResultSet durchlaufen
                 while (rs.next()) {
-                    //Iterate Row
 
+                    // aktuelle Zeile wird vorbereitet
                     ObservableList<String> row = FXCollections.observableArrayList();
 
+                    // Spalte des ResultSet durchlaufen
                     for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
-
-                        //Iterate Column
+                        // der Zeile die Zellen hinzufuegen
                         row.add(rs.getString(i));
-
                     }
 
-                    //System.out.println("Row [1] added " + row);
-                    data.add(row);
+                    // die Zeile der Tabelle hinzufuegen
+                    TableView.getItems().add(row);
 
+                    //System.out.println("Row [" + rs.getRow() + "] added " + row);
                 }
-
-                //FINALLY ADDED TO TableView
-                TableView.setItems(data);
-                /**
-                 * ****************************
-                 */
 
             }
 
-        } catch (SQLException ex) {
+        } catch (SQLException e) {
             // Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
             setze_status(0);
 
             ListView.setItems(null);
 
-            System.err.println("SQl-Fehler! Verbindung okay? Benutzername & Passwort?");
+            System.err.println("SQl-Fehler!");
+            e.printStackTrace();
         }
 
     }

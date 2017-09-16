@@ -9,7 +9,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<VBox prefHeight="635.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="FxDatenbankHAW.FXMLDocumentController">
+<VBox prefHeight="635.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="FxDatenbank.FXMLDocumentController">
     <children>
         <MenuBar prefHeight="14.0" prefWidth="900.0" VBox.vgrow="NEVER">
             <menus>
