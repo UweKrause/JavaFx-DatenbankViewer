@@ -20,6 +20,8 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.DriverManager;
+import java.util.Arrays;
+import java.util.List;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
 /**
@@ -75,6 +77,17 @@ public class FXMLDocumentController {
             String user = login_benutzername.getText().trim();
             String passwort = login_passwort.getText().trim();
 
+            /**
+             * Dieser Prototyp funktioniert erst einmal nur mit der
+             * dazugehoerigen Datenbank. Allgemeinere Unterstuetzung folget
+             * spaeter.
+             *
+             * In der Beispieldatenbank sind verschiedene Tabellen mit
+             * unterschiedlichen Namenschema, fuer den Prototypen geht es erst
+             * mal nur um das Gesamtkonzept und die Umsetzung mit JavaFX
+             */
+            List<String> tmp_skiptables = Arrays.asList("ErrorLog", "BuildVersion");
+
             if (!"".equals(user) && !"".equals(passwort)) {
 
                 Statement stmt = verbinde(user, passwort);
@@ -90,8 +103,15 @@ public class FXMLDocumentController {
                 ObservableList<String> items = FXCollections.observableArrayList();
 
                 while (rset.next()) {
-                    // System.out.println(rset.getString(1));
-                    items.add(rset.getString(1));
+
+                    String tableName = rset.getString(1);
+
+                    /**
+                     * temporaerer Fix fuer zusaetzlich angezeigte Tabellen
+                     */
+                    if (!tmp_skiptables.contains(tableName)) {
+                        items.add(tableName);
+                    }
                 }
 
                 ListView.setItems(items);
