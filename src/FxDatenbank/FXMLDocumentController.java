@@ -47,6 +47,9 @@ public class FXMLDocumentController {
     private Label rightStatus;
 
     @FXML
+    private Label Status_server;
+
+    @FXML
     private ListView ListView;
 
     private Statement verbinde(String db_user, String db_password) throws SQLException {
@@ -110,8 +113,7 @@ public class FXMLDocumentController {
 
         Object clicked_on = ListView.getSelectionModel().getSelectedItem();
 
-        System.out.println("clicked on " + clicked_on);
-
+        // System.out.println("clicked on " + clicked_on);
         // Tabellenliste wird aktualisiert
         fuelle_listview();
 
@@ -150,16 +152,19 @@ public class FXMLDocumentController {
             case 0:
                 rightStatus.setTextFill(Color.web("red"));
                 rightStatus.setText("Verbindungsfehler");
-
+                Status_server.setText("");
                 label_tableview.setText("Inhalt");
                 break;
             case 1:
                 rightStatus.setTextFill(Color.web("#C0C0C0"));
                 rightStatus.setText("Verbindung hergestellt");
+                Status_server.setText("uwe.database.windows.com");
+
                 break;
 
             default:
                 rightStatus.setTextFill(Color.web("#C0C0C0"));
+                Status_server.setText("");
                 rightStatus.setText("status");
 
         }
