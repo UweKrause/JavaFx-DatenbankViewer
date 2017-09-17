@@ -22,7 +22,7 @@ public class FxDatenbank extends Application {
 
         primaryStage.setScene(scene);
 
-        primaryStage.setTitle("Datenbank Anschauer v0.2");
+        primaryStage.setTitle("Datenbank Anschauer v0.4");
 
         primaryStage.show();
     }
